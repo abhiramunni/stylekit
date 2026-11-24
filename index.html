@@ -467,3 +467,56 @@ function renderToday(){
     '<div class="today-pieces">' +
       '<span class="pill pill-bronze">' + esc(t ? t.name : '—') + '</span>' +
       '<span class="pill pill-bronze">' + esc(b ? b.name : '—') + '</span>' +
+      '<span class="pill pill-bronze">' + esc(s ? s.name : '—') + '</span>' +
+      '<span class="pill pill-grey">' + esc(o.occ) + '</span>' +
+    '</div></div>' +
+    '<div class="tc-actions">' +
+      '<button class="btn btn-dark btn-sm" data-act="wear-outfit" data-id="' + o.id + '">I wore this today</button>' +
+      '<button class="btn btn-ghost btn-sm" data-act="load-outfit" data-id="' + o.id + '">Load in builder</button>' +
+    '</div>';
+}
+/* ---------- render: chips ---------- */
+function renderChips(){
+  var occ = document.getElementById('occChips');
+  occ.innerHTML = OCCASIONS.map(function(o){
+    return '<button class="chip' + (state.occ===o ? ' on' : '') + '" data-occ="' + o + '">' + o + '</button>';
+  }).join('');
+  var w = document.getElementById('weatherChips');
+  w.innerHTML = WEATHERS.map(function(x){
+    return '<button class="chip' + (state.weather===x ? ' on' : '') + '" data-weather="' + x + '">' + x + '</button>';
+  }).join('');
+}
+/* ---------- render: builder rails ---------- */
+function fitsItem(it){
+  return it.occ.indexOf(state.occ) !== -1 && it.weather.indexOf(state.weather) !== -1;
+}
+function renderRails(){
+  var types = [['top','railTop','pickTop'],['bottom','railBottom','pickBottom'],['shoes','railShoes','pickShoes']];
+  types.forEach(function(cfg){
+    var type = cfg[0], rail = document.getElementById(cfg[1]), pickEl = document.getElementById(cfg[2]);
+    var list = state.items.filter(function(it){ return it.type===type; });
+    list.sort(function(a,b){ return (fitsItem(b)?1:0) - (fitsItem(a)?1:0); });
+    rail.innerHTML = list.map(function(it){
+      var sel = state.sel[type]===it.id;
+      var sw = SWATCH[it.colour] || '#d9c6a5';
+      var flags = '';
+      if(it.washFirst) flags += '<span class="flag">Wash first</span>';
+      else if(isLaundry(it.id)) flags += '<span class="laundry-tag">In laundry</span>';
+      return '<button class="item-card' + (sel?' sel':'') + (isLaundry(it.id)?' laundry':'') + '" data-type="' + type + '" data-id="' + it.id + '" ' + (isLaundry(it.id)?'disabled':'') + '>' +
+        flags +
+        '<span class="swatch" style="background:' + sw + '">' + typeIcon(type) + '</span>' +
+        '<span class="nm">' + esc(it.name) + '</span>' +
+        '<span class="meta">' + it.wears + ' wears · ' + inr(cpw(it)) + '/wear</span>' +
+      '</button>';
+    }).join('');
+    var picked = itemById(state.sel[type]);
+    pickEl.textContent = picked ? '· ' + picked.name : '';
+  });
+  renderVerdict();
+}
+function renderVerdict(){
+  var t = itemById(state.sel.top), b = itemById(state.sel.bottom), s = itemById(state.sel.shoes);
+  var v = document.getElementById('verdict');
+  if(!t || !b || !s){ v.textContent = 'Pick one piece from each rail.'; return; }
+  var total = cpw(t) + cpw(b) + cpw(s);
+  var fit = [t,b,s].every(fitsItem);
