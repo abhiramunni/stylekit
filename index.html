@@ -827,3 +827,61 @@ document.addEventListener('click', function(e){
       state.items = state.items.filter(function(x){ return x.id!==id; });
       state.laundry = state.laundry.filter(function(x){ return x!==id; });
       state.outfits = state.outfits.filter(function(x){ return x.top!==id && x.bottom!==id && x.shoes!==id; });
+      ['top','bottom','shoes'].forEach(function(t){ if(state.sel[t]===id) state.sel[t] = null; });
+      save(); renderAll(); toast(it ? it.name + ' removed.' : 'Item removed.');
+    }
+    return;
+  }
+  var guide = e.target.closest('[data-guide]');
+  if(guide){
+    var g = GUIDES[parseInt(guide.getAttribute('data-guide'), 10)];
+    if(g) openSheet(g.t, 'Style guide', g.b);
+    return;
+  }
+  if(e.target.closest('#sheetClose') || e.target.id === 'sheetBack') closeSheet();
+});
+document.addEventListener('change', function(e){
+  var sel = e.target.closest('[data-week]');
+  if(sel){
+    var key = sel.getAttribute('data-week');
+    if(sel.value) state.week[key] = sel.value; else delete state.week[key];
+    save(); renderWeek(); renderStats();
+  }
+});
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape') closeSheet();
+  var g = e.target.closest && e.target.closest('[data-guide]');
+  if(g && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); g.click(); }
+});
+document.getElementById('btnShuffle').addEventListener('click', shuffle);
+document.getElementById('btnSaveOutfit').addEventListener('click', saveOutfit);
+document.getElementById('btnWore').addEventListener('click', function(){
+  if(!itemById(state.sel.top) || !itemById(state.sel.bottom) || !itemById(state.sel.shoes)){
+    toast('Pick one piece from each rail first.'); return;
+  }
+  wearPieces(state.sel.top, state.sel.bottom, state.sel.shoes);
+  renderAll();
+  toast('Logged — those three pieces are in the laundry basket now.');
+});
+document.getElementById('btnWashAll').addEventListener('click', washAll);
+document.getElementById('btnAddItem').addEventListener('click', addItem);
+document.getElementById('btnCopy').addEventListener('click', copySummary);
+document.getElementById('btnRemoveSamples').addEventListener('click', removeSamples);
+document.getElementById('btnErase').addEventListener('click', eraseAll);
+/* ---------- coach ---------- */
+var COACH_STEPS = [
+  {t:'Step 1 — Build an outfit', x:'Pick one piece from each rail: a top, a bottom, shoes. Tap “Surprise me” when you cannot decide.'},
+  {t:'Step 2 — Wear it, wash it', x:'“I wore this today” logs the wears and sends the pieces to the laundry basket. Mark them washed and they come back.'},
+  {t:'Step 3 — Plan the week', x:'Assign a saved outfit to each day in “This week” and mornings stop being a decision.'}
+];
+var coachStep = 0;
+function showCoach(i){
+  coachStep = i;
+  var c = document.getElementById('coach');
+  document.getElementById('coachTitle').textContent = COACH_STEPS[i].t;
+  document.getElementById('coachText').textContent = COACH_STEPS[i].x;
+  document.getElementById('coachDots').textContent = (i+1) + ' of ' + COACH_STEPS.length;
+  document.getElementById('coachNext').textContent = i === COACH_STEPS.length-1 ? 'Done' : 'Next';
+  c.classList.add('open');
+}
+function hideCoach(){
