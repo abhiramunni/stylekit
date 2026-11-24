@@ -569,3 +569,47 @@ function renderWardrobe(){
   var grid = document.getElementById('wardGrid');
   var list = state.items.filter(function(it){
     if(state.wardFilter==='Tops') return it.type==='top';
+    if(state.wardFilter==='Bottoms') return it.type==='bottom';
+    if(state.wardFilter==='Shoes') return it.type==='shoes';
+    if(state.wardFilter==='Ready') return !isLaundry(it.id);
+    if(state.wardFilter==='In laundry') return isLaundry(it.id);
+    if(state.wardFilter==='Wash first') return !!it.washFirst;
+    return true;
+  });
+  if(!list.length){
+    grid.innerHTML = '<div class="empty">Nothing matches this filter.</div>';
+    return;
+  }
+  grid.innerHTML = list.map(function(it){
+    var sw = SWATCH[it.colour] || '#d9c6a5';
+    var status = it.washFirst ? '<span class="pill pill-red">Wash first</span>' : (isLaundry(it.id) ? '<span class="pill pill-grey">In laundry</span>' : '<span class="pill pill-green">Ready</span>');
+    return '<article class="ward-card">' +
+      '<span class="swatch" style="background:' + sw + '">' + typeIcon(it.type) + '</span>' +
+      '<div><div class="nm">' + esc(it.name) + '</div>' +
+      '<div class="meta">' + esc(it.type) + ' · ' + esc(it.colour) + ' · ' + inr(it.price) + ' · ' + it.wears + ' wears</div>' +
+      '<div class="cpw">Cost per wear: <b>' + inr(cpw(it)) + '</b></div>' +
+      '<div style="margin-top:8px">' + status + '</div></div>' +
+      '<div class="wc-actions">' +
+        (isLaundry(it.id) ? '<button class="icon-btn" data-act="wash-one" data-id="' + it.id + '" title="Mark washed" aria-label="Mark washed"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>' : '') +
+        '<button class="icon-btn" data-act="del-item" data-id="' + it.id + '" title="Remove item" aria-label="Remove ' + esc(it.name) + '"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>' +
+      '</div></article>';
+  }).join('');
+}
+/* ---------- render: week planner ---------- */
+function renderWeek(){
+  var strip = document.getElementById('weekStrip');
+  var today = new Date(); today.setHours(0,0,0,0);
+  var html = '';
+  for(var i=0;i<7;i++){
+    var d = new Date(today); d.setDate(d.getDate()+i);
+    var key = iso(d);
+    var oid = state.week[key] || '';
+    var o = oid ? outfitById(oid) : null;
+    var dow = d.toLocaleDateString('en-IN',{weekday:'short'});
+    html += '<div class="day-cell' + (i===0 ? ' today' : '') + '">' +
+      '<div class="dow">' + dow + (i===0 ? ' · Today' : '') + '</div>' +
+      '<div class="dnum">' + d.getDate() + '</div>' +
+      (o ? '<div class="dout"><b>' + esc(o.name) + '</b>' + esc((itemById(o.top)||{}).name||'') + ' · ' + esc((itemById(o.bottom)||{}).name||'') + '</div>'
+         : '<div class="dempty">Nothing planned yet.</div>') +
+      '<select data-week="' + key + '" aria-label="Outfit for ' + dow + ' ' + d.getDate() + '">' +
+        '<option value="">— Pick outfit —</option>' +
