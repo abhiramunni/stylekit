@@ -769,3 +769,61 @@ function removeSamples(){
   var before = state.items.length;
   state.items = state.items.filter(function(it){ return !it.sample; });
   state.outfits = state.outfits.filter(function(o){ return !o.sample; });
+  state.laundry = state.laundry.filter(function(id){ return !!itemById(id); });
+  ['top','bottom','shoes'].forEach(function(t){
+    if(!itemById(state.sel[t])) state.sel[t] = null;
+  });
+  Object.keys(state.week).forEach(function(k){ if(!outfitById(state.week[k])) delete state.week[k]; });
+  save(); renderAll();
+  toast('Removed ' + (before - state.items.length) + ' sample pieces. Your own items stay.');
+}
+function eraseAll(){
+  if(!window.confirm('Erase everything in StyleKit and start fresh? This cannot be undone.')) return;
+  try{ localStorage.removeItem(LS_KEY); }catch(e){}
+  state = defaultState();
+  save(); renderAll();
+  toast('StyleKit is fresh again.');
+}
+/* ---------- events ---------- */
+document.addEventListener('click', function(e){
+  var chip = e.target.closest('[data-occ]');
+  if(chip){ state.occ = chip.getAttribute('data-occ'); save(); renderChips(); renderRails(); return; }
+  var wchip = e.target.closest('[data-weather]');
+  if(wchip){ state.weather = wchip.getAttribute('data-weather'); save(); renderChips(); renderRails(); return; }
+  var wf = e.target.closest('[data-ward]');
+  if(wf){ state.wardFilter = wf.getAttribute('data-ward'); save(); renderWardrobe(); return; }
+  var card = e.target.closest('.item-card');
+  if(card && !card.disabled){
+    state.sel[card.getAttribute('data-type')] = card.getAttribute('data-id');
+    save(); renderRails(); return;
+  }
+  var nav = e.target.closest('[data-nav]');
+  if(nav){
+    document.querySelectorAll('nav.main button').forEach(function(b){ b.classList.remove('on'); });
+    nav.classList.add('on');
+    var sec = document.getElementById(nav.getAttribute('data-nav'));
+    if(sec && sec.scrollIntoView) sec.scrollIntoView({behavior:'smooth'});
+    return;
+  }
+  var act = e.target.closest('[data-act]');
+  if(act){
+    var a = act.getAttribute('data-act'), id = act.getAttribute('data-id');
+    if(a==='wear-outfit') wearOutfit(id);
+    else if(a==='load-outfit'){
+      var o = outfitById(id);
+      if(o){ state.sel = {top:o.top, bottom:o.bottom, shoes:o.shoes}; state.occ = o.occ; save(); renderAll();
+        var b = document.getElementById('builder');
+        if(b && b.scrollIntoView) b.scrollIntoView({behavior:'smooth'});
+        toast(o.name + ' loaded in the builder.'); }
+    }
+    else if(a==='del-outfit'){
+      state.outfits = state.outfits.filter(function(x){ return x.id!==id; });
+      Object.keys(state.week).forEach(function(k){ if(state.week[k]===id) delete state.week[k]; });
+      save(); renderAll(); toast('Outfit deleted.');
+    }
+    else if(a==='wash-one') washOne(id);
+    else if(a==='del-item'){
+      var it = itemById(id);
+      state.items = state.items.filter(function(x){ return x.id!==id; });
+      state.laundry = state.laundry.filter(function(x){ return x!==id; });
+      state.outfits = state.outfits.filter(function(x){ return x.top!==id && x.bottom!==id && x.shoes!==id; });
