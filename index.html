@@ -341,3 +341,44 @@ footer.site .frow{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
 
 <div class="sheet-back" id="sheetBack" role="dialog" aria-modal="true">
   <div class="sheet">
+    <button class="icon-btn close-x" id="sheetClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    <h2 id="sheetTitle"></h2>
+    <p class="muted small" id="sheetSub"></p>
+    <div class="sheet-body" id="sheetBody"></div>
+  </div>
+</div>
+
+<div class="coach" id="coach" role="status">
+  <h3 id="coachTitle"></h3>
+  <p id="coachText"></p>
+  <div class="c-foot">
+    <button class="btn btn-bronze btn-sm" id="coachNext">Next</button>
+    <button class="btn btn-ghost btn-sm" id="coachSkip" style="color:#f7f1e5;border-color:#f7f1e5">Skip tour</button>
+    <span class="dots" id="coachDots"></span>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+'use strict';
+/* StyleKit — outfit planner. All state in localStorage, key stylekit_v1. */
+var LS_KEY = 'stylekit_v1';
+var OCCASIONS = ['Everyday','Interview','Date','Turf','Temple','Travel','College'];
+var WEATHERS = ['Hot','Pleasant','Cool','Rain'];
+var SWATCH = {
+  white:'#f4efe4', brown:'#7a4a26', black:'#2b2b2b', grey:'#8d8d8d', blue:'#5b7a99',
+  beige:'#d9c6a5', maroon:'#7a2e2e', olive:'#6b6b3a', purple:'#6b4a7a'
+};
+function seedItems(){
+  return [
+    {id:'t1', type:'top', name:'White linen shirt', colour:'white', price:1499, wears:12, occ:['Everyday','Interview','Date','Travel'], weather:['Pleasant','Cool'], sample:true},
+    {id:'t2', type:'top', name:'Brown shirt', colour:'brown', price:1199, wears:9, occ:['Everyday','Date','Travel'], weather:['Hot','Pleasant','Cool'], sample:true},
+    {id:'t3', type:'top', name:'Demon Slayer tee', colour:'black', price:799, wears:14, occ:['Everyday','Turf','College'], weather:['Hot','Pleasant'], sample:true},
+    {id:'t4', type:'top', name:'Nike "JUST DO IT." sweatshirt', colour:'black', price:2499, wears:7, occ:['Everyday','College','Travel'], weather:['Cool'], sample:true},
+    {id:'t5', type:'top', name:'Rare Rabbit brown hoodie', colour:'brown', price:2999, wears:6, occ:['Everyday','College','Travel'], weather:['Cool'], sample:true},
+    {id:'t6', type:'top', name:'Light-blue tee', colour:'blue', price:599, wears:4, occ:['Everyday'], weather:['Hot','Pleasant'], washFirst:true, sample:true},
+    {id:'t7', type:'top', name:'Black plain tee', colour:'black', price:499, wears:11, occ:['Everyday','Turf'], weather:['Hot','Pleasant'], sample:true},
+    {id:'t8', type:'top', name:'Checked shirt', colour:'grey', price:999, wears:5, occ:['Everyday','Interview','Date'], weather:['Pleasant','Cool'], sample:true},
+    {id:'b1', type:'bottom', name:'Grey jeans', colour:'grey', price:1799, wears:13, occ:['Everyday','Date','Travel','College'], weather:['Hot','Pleasant','Cool'], sample:true},
+    {id:'b2', type:'bottom', name:'Grey check trousers', colour:'grey', price:1499, wears:8, occ:['Interview','Date'], weather:['Pleasant','Cool'], sample:true},
