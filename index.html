@@ -382,3 +382,47 @@ function seedItems(){
     {id:'t8', type:'top', name:'Checked shirt', colour:'grey', price:999, wears:5, occ:['Everyday','Interview','Date'], weather:['Pleasant','Cool'], sample:true},
     {id:'b1', type:'bottom', name:'Grey jeans', colour:'grey', price:1799, wears:13, occ:['Everyday','Date','Travel','College'], weather:['Hot','Pleasant','Cool'], sample:true},
     {id:'b2', type:'bottom', name:'Grey check trousers', colour:'grey', price:1499, wears:8, occ:['Interview','Date'], weather:['Pleasant','Cool'], sample:true},
+    {id:'b3', type:'bottom', name:'Black tribal joggers', colour:'black', price:899, wears:10, occ:['Turf','Everyday'], weather:['Hot','Pleasant','Cool'], sample:true},
+    {id:'b4', type:'bottom', name:'Blue jeans', colour:'grey', price:1599, wears:9, occ:['Everyday','Date','College'], weather:['Hot','Pleasant','Cool'], sample:true},
+    {id:'b5', type:'bottom', name:'Beige chinos', colour:'beige', price:1299, wears:6, occ:['Interview','Date','Travel'], weather:['Pleasant','Cool'], sample:true},
+    {id:'b6', type:'bottom', name:'Black track pants', colour:'black', price:699, wears:7, occ:['Turf'], weather:['Hot','Pleasant','Cool'], sample:true},
+    {id:'s1', type:'shoes', name:'Brown Woodlands', colour:'brown', price:1999, wears:15, occ:['Everyday','Date','Travel','Temple'], weather:['Hot','Pleasant','Cool'], sample:true},
+    {id:'s2', type:'shoes', name:'Woodland hiking shoes', colour:'brown', price:3499, wears:4, occ:['Travel','Turf'], weather:['Pleasant','Cool','Rain'], sample:true},
+    {id:'s3', type:'shoes', name:'Shaq black shoes', colour:'black', price:2199, wears:8, occ:['Everyday','College','Date'], weather:['Hot','Pleasant','Cool'], sample:true},
+    {id:'s4', type:'shoes', name:'Nike Air Monarch', colour:'white', price:3999, wears:6, occ:['Turf','Everyday'], weather:['Hot','Pleasant'], sample:true},
+    {id:'s5', type:'shoes', name:'Vans Old Skool', colour:'black', price:4499, wears:3, occ:['Everyday','College'], weather:['Hot','Pleasant'], sample:true}
+  ];
+}
+function seedOutfits(){
+  return [
+    {id:'o1', name:'The Classic', top:'t1', bottom:'b1', shoes:'s1', occ:'Everyday', wears:5, sample:true},
+    {id:'o2', name:'Brown on Brown', top:'t2', bottom:'b2', shoes:'s1', occ:'Date', wears:3, sample:true},
+    {id:'o3', name:'Turf Ready', top:'t3', bottom:'b3', shoes:'s4', occ:'Turf', wears:4, sample:true}
+  ];
+}
+function defaultState(){
+  var today = new Date(); today.setHours(0,0,0,0);
+  var week = {};
+  week[iso(today)] = 'o1';
+  var tmr = new Date(today); tmr.setDate(tmr.getDate()+1);
+  week[iso(tmr)] = 'o2';
+  return {
+    items: seedItems(), outfits: seedOutfits(), laundry: ['t7'],
+    sel: {top:'t1', bottom:'b1', shoes:'s1'},
+    occ:'Everyday', weather:'Pleasant', wardFilter:'All',
+    week: week, seen:false, coachDone:false
+  };
+}
+function load(){
+  try{
+    var raw = localStorage.getItem(LS_KEY);
+    if(!raw) return defaultState();
+    var s = JSON.parse(raw);
+    if(!s || !Array.isArray(s.items) || !Array.isArray(s.outfits)) return defaultState();
+    return s;
+  }catch(e){ return defaultState(); }
+}
+var state = load();
+function save(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){} }
+function iso(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function inr(n){ return '₹' + Math.round(n).toLocaleString('en-IN'); }
