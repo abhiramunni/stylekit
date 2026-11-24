@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StyleKit — Dress Well, Decide Fast</title>
+<meta name="description" content="StyleKit plans your outfits from the clothes you already own — mix-and-match builder, laundry rotation, week planner and cost-per-wear.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f7f1e5; --paper2:#fbf7ee; --card:#fffdf7; --ink:#2b1d12; --ink2:#5d4a33;
+  --muted:#8a7560; --line:#e5d9c3; --bronze:#b07d3c; --amber:#d9a441; --gold:#c9a227;
+  --terra:#c05f33; --terra-soft:#f3e0d3; --green:#5f7a4e; --green-soft:#e6ecdd;
+  --red:#a83c2a; --red-soft:#f6e3de; --shadow:0 10px 30px rgba(43,29,18,.10);
+  --r:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.serif{font-family:'Fraunces',Georgia,serif;font-weight:600;line-height:1.15}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit;font-size:1rem;color:var(--ink)}
+img{max-width:100%;display:block}
+a{color:var(--bronze)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.muted{color:var(--muted)}
+.small{font-size:.86rem}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;font-size:.78rem;font-weight:600;letter-spacing:.02em}
+.pill-bronze{background:#f0e2c8;color:#7a5518}
+.pill-green{background:var(--green-soft);color:#43582f}
+.pill-red{background:var(--red-soft);color:var(--red)}
+.pill-terra{background:var(--terra-soft);color:#8a3c1e}
+.pill-grey{background:#efe9db;color:var(--ink2)}
+/* ---------- intro ---------- */
+#intro{position:fixed;inset:0;z-index:200;background:linear-gradient(160deg,#241608,#3a2412 55%,#5c3a17);color:#f7ead2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;transition:opacity .6s ease,visibility .6s}
+#intro.hide{opacity:0;visibility:hidden;pointer-events:none}
+#intro .logo-mark{width:92px;height:92px;border-radius:26px;background:linear-gradient(145deg,#d9a441,#b07d3c);display:flex;align-items:center;justify-content:center;box-shadow:0 18px 50px rgba(0,0,0,.45);animation:logoIn 1s cubic-bezier(.2,.9,.3,1.2) both}
+#intro .logo-mark svg{width:52px;height:52px;stroke:#fff8ea}
+@keyframes logoIn{from{transform:scale(.4) rotate(-14deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
