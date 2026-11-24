@@ -289,3 +289,55 @@ footer.site .frow{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
   <section id="wardrobe">
     <div class="sec-head"><span class="kicker">Wardrobe</span><h2>Everything you own.</h2></div>
     <p class="sec-sub">Cost-per-wear is the honest price of a piece: what you paid, divided by how many times you have actually worn it. The lower, the better the buy.</p>
+    <div class="chiprow" id="wardFilters" style="margin-bottom:16px"></div>
+    <div class="ward-grid" id="wardGrid"></div>
+    <div class="add-form">
+      <h3>Add a piece to your wardrobe</h3>
+      <div class="frow">
+        <input id="addName" type="text" placeholder="Name — e.g. Olive kurta" maxlength="40" aria-label="Item name">
+        <select id="addType" aria-label="Item type"><option value="top">Top</option><option value="bottom">Bottom</option><option value="shoes">Shoes</option></select>
+        <input id="addPrice" type="number" min="0" max="999999" placeholder="Price ₹" aria-label="Price in rupees">
+        <input id="addColour" type="text" placeholder="Colour — e.g. olive" maxlength="20" aria-label="Colour">
+        <button class="btn btn-dark" id="btnAddItem">Add item</button>
+      </div>
+      <p class="muted small" style="margin-top:10px">Tip: add the price and StyleKit tracks cost-per-wear from day one. Leave it blank if you don’t remember.</p>
+    </div>
+  </section>
+
+  <section id="week">
+    <div class="sec-head"><span class="kicker">This week</span><h2>Seven days, zero morning panic.</h2></div>
+    <p class="sec-sub">Plan each day’s outfit now. Pick a saved outfit per day — or leave a day open and decide on the morning.</p>
+    <div class="week-strip" id="weekStrip"></div>
+  </section>
+
+  <section id="stats">
+    <div class="sec-head"><span class="kicker">Your numbers</span><h2>What your wardrobe is really doing.</h2></div>
+    <div class="stat-grid" id="statGrid"></div>
+  </section>
+  <section id="guides">
+    <div class="sec-head"><span class="kicker">Style guides</span><h2>Small rules, big difference.</h2></div>
+    <p class="sec-sub">Plain-language notes — no fashion jargon, no shopping links. Tap a card to read it.</p>
+    <div class="guide-grid" id="guideGrid"></div>
+  </section>
+
+  <div class="band">
+    <img src="stylekit-flatlay.webp" alt="Folded white linen shirt, grey jeans, brown leather belt and brown shoes laid out on ivory linen" onerror="this.style.display='none'">
+    <div class="band-copy">
+      <h2>Lay it out the night before.</h2>
+      <p>The single best style habit costs nothing: pick tomorrow’s outfit tonight, and mornings stop being a decision.</p>
+    </div>
+  </div>
+</div>
+
+<footer class="site">
+  <div class="wrap frow">
+    <span><strong>StyleKit</strong> — your wardrobe, planned.</span>
+    <span style="margin-left:auto">Everything is saved on this device only. No account, no uploads.</span>
+    <button class="btn btn-ghost btn-sm" id="btnCopy">Copy my summary</button>
+    <button class="btn btn-ghost btn-sm" id="btnRemoveSamples">Remove samples</button>
+    <button class="btn btn-ghost btn-sm" id="btnErase">Erase everything</button>
+  </div>
+</footer>
+
+<div class="sheet-back" id="sheetBack" role="dialog" aria-modal="true">
+  <div class="sheet">
