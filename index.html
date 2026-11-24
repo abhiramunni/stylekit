@@ -613,3 +613,32 @@ function renderWeek(){
          : '<div class="dempty">Nothing planned yet.</div>') +
       '<select data-week="' + key + '" aria-label="Outfit for ' + dow + ' ' + d.getDate() + '">' +
         '<option value="">— Pick outfit —</option>' +
+        state.outfits.map(function(x){ return '<option value="' + x.id + '"' + (x.id===oid?' selected':'') + '>' + esc(x.name) + '</option>'; }).join('') +
+      '</select></div>';
+  }
+  strip.innerHTML = html;
+}
+/* ---------- render: stats ---------- */
+function renderStats(){
+  var ready = state.items.filter(function(it){ return !isLaundry(it.id); }).length;
+  var totalWears = state.items.reduce(function(a,it){ return a+it.wears; }, 0);
+  var totalPrice = state.items.reduce(function(a,it){ return a+it.price; }, 0);
+  var most = null, least = null;
+  state.items.forEach(function(it){
+    if(!most || it.wears > most.wears) most = it;
+    if(!least || it.wears < least.wears) least = it;
+  });
+  var avg = totalWears ? totalPrice / totalWears : 0;
+  document.getElementById('statGrid').innerHTML =
+    '<div class="stat"><div class="num">' + state.items.length + '</div><div class="lbl">Pieces in your wardrobe</div></div>' +
+    '<div class="stat"><div class="num">' + ready + '</div><div class="lbl">Ready to wear right now</div></div>' +
+    '<div class="stat"><div class="num">' + inr(avg) + '</div><div class="lbl">Average cost per wear</div></div>' +
+    '<div class="stat"><div class="num">' + state.outfits.length + '</div><div class="lbl">Saved outfits</div></div>' +
+    '<div class="stat"><div class="num" style="font-size:1.4rem;padding-top:6px">' + esc(most ? most.name : '—') + '</div><div class="lbl">Most worn — ' + (most ? most.wears : 0) + ' wears</div></div>' +
+    '<div class="stat"><div class="num" style="font-size:1.4rem;padding-top:6px">' + esc(least ? least.name : '—') + '</div><div class="lbl">Least worn — ' + (least ? least.wears : 0) + ' wears</div></div>' +
+    '<div class="stat"><div class="num">' + state.laundry.length + '</div><div class="lbl">Pieces in the laundry basket</div></div>' +
+    '<div class="stat"><div class="num">' + totalWears + '</div><div class="lbl">Total wears logged</div></div>';
+}
+/* ---------- guides ---------- */
+var GUIDES = [
+  {t:'Build a capsule, not a pile', b:'<p>Most days are won by 10–15 pieces that all go together. Pick one neutral bottom, two tops that match it, one pair of shoes — that is already six outfits. Add pieces only when they match at least three things you already own.</p><ul><li>Neutrals first: white, black, grey, brown, navy.</li><li>One new piece must pair with three old ones.</li><li>If you have not worn it in 60 days, it is not part of the capsule.</li></ul>'},
