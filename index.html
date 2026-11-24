@@ -520,3 +520,52 @@ function renderVerdict(){
   if(!t || !b || !s){ v.textContent = 'Pick one piece from each rail.'; return; }
   var total = cpw(t) + cpw(b) + cpw(s);
   var fit = [t,b,s].every(fitsItem);
+  v.innerHTML = 'This outfit costs about <span>' + inr(total) + ' per wear</span> across the three pieces. ' +
+    (fit ? 'All three suit a ' + esc(state.weather.toLowerCase()) + ' ' + esc(state.occ.toLowerCase()) + ' day.' : 'One piece is not a natural fit for a ' + esc(state.weather.toLowerCase()) + ' ' + esc(state.occ.toLowerCase()) + ' day — it still works, just know why you picked it.');
+}
+/* ---------- render: saved outfits ---------- */
+function renderOutfits(){
+  var rail = document.getElementById('outfitRail');
+  if(!state.outfits.length){
+    rail.innerHTML = '<div class="empty">No saved outfits yet. Build one above and tap “Save outfit”.</div>';
+    return;
+  }
+  rail.innerHTML = state.outfits.map(function(o){
+    var t = itemById(o.top), b = itemById(o.bottom), s = itemById(o.shoes);
+    return '<article class="outfit-card">' +
+      '<div class="oc-photo"><img src="stylekit-flatlay.webp" alt="" loading="lazy" onerror="this.style.display=\'none\'"><span class="oc-name">' + esc(o.name) + '</span></div>' +
+      '<div class="oc-body">' +
+        '<p class="oc-pieces">' + esc(t?t.name:'—') + '<br>' + esc(b?b.name:'—') + '<br>' + esc(s?s.name:'—') + '</p>' +
+        '<div class="oc-foot">' +
+          '<span class="pill pill-terra">' + esc(o.occ) + '</span>' +
+          '<button class="btn btn-dark btn-sm" data-act="wear-outfit" data-id="' + o.id + '">Wear today</button>' +
+          '<button class="btn btn-ghost btn-sm" data-act="load-outfit" data-id="' + o.id + '">Load</button>' +
+          '<button class="btn btn-ghost btn-sm" data-act="del-outfit" data-id="' + o.id + '" aria-label="Delete ' + esc(o.name) + '">Delete</button>' +
+          '<span class="wears">Worn ' + o.wears + '×</span>' +
+        '</div>' +
+      '</div></article>';
+  }).join('');
+}
+/* ---------- render: laundry ---------- */
+function renderLaundry(){
+  var box = document.getElementById('laundryItems');
+  if(!state.laundry.length){
+    box.innerHTML = '<span class="muted small">Basket is empty — everything is ready to wear.</span>';
+    return;
+  }
+  box.innerHTML = state.laundry.map(function(id){
+    var it = itemById(id);
+    if(!it) return '';
+    return '<span class="laundry-chip">' + esc(it.name) + '<button data-act="wash-one" data-id="' + id + '">Washed</button></span>';
+  }).join('');
+}
+/* ---------- render: wardrobe ---------- */
+var WARD_FILTERS = ['All','Tops','Bottoms','Shoes','Ready','In laundry','Wash first'];
+function renderWardrobe(){
+  var f = document.getElementById('wardFilters');
+  f.innerHTML = WARD_FILTERS.map(function(x){
+    return '<button class="chip' + (state.wardFilter===x ? ' on' : '') + '" data-ward="' + x + '">' + x + '</button>';
+  }).join('');
+  var grid = document.getElementById('wardGrid');
+  var list = state.items.filter(function(it){
+    if(state.wardFilter==='Tops') return it.type==='top';
