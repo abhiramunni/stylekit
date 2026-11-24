@@ -885,3 +885,37 @@ function showCoach(i){
   c.classList.add('open');
 }
 function hideCoach(){
+  document.getElementById('coach').classList.remove('open');
+  state.coachDone = true; save();
+}
+document.getElementById('coachNext').addEventListener('click', function(){
+  if(coachStep >= COACH_STEPS.length-1) hideCoach(); else showCoach(coachStep+1);
+});
+document.getElementById('coachSkip').addEventListener('click', hideCoach);
+/* ---------- intro ---------- */
+function initIntro(){
+  var intro = document.getElementById('intro');
+  var seen = state.seen;
+  if(seen) intro.classList.add('quick');
+  var done = false;
+  function finish(){
+    if(done) return; done = true;
+    intro.classList.add('hide');
+    state.seen = true; save();
+    if(!state.coachDone) setTimeout(function(){ showCoach(0); }, 500);
+  }
+  intro.addEventListener('click', finish);
+  intro.addEventListener('keydown', function(e){ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); finish(); } });
+  setTimeout(finish, seen ? 900 : 3800);
+}
+/* ---------- init ---------- */
+renderAll();
+initIntro();
+window.StyleKit = {
+  state: state, itemById: itemById, outfitById: outfitById, cpw: cpw,
+  todayOutfit: todayOutfit, wearOutfit: wearOutfit, shuffle: shuffle,
+  washOne: washOne, renderAll: renderAll, GUIDES: GUIDES
+};
+</script>
+</body>
+</html>
