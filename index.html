@@ -210,3 +210,47 @@ footer.site .frow{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
   .today-card .tc-actions{margin-left:0}
 }
 @media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+<div id="intro" role="button" aria-label="Skip intro" tabindex="0">
+  <div class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg></div>
+  <h1>StyleKit</h1>
+  <p class="tag">Dress well. Decide fast.</p>
+  <div class="bar"><i></i></div>
+  <span class="skip">Tap anywhere to skip</span>
+</div>
+
+<header class="site">
+  <div class="wrap site-in">
+    <div class="brand"><span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg></span>Style<em>Kit</em></div>
+    <nav class="main" aria-label="Sections">
+      <button data-nav="builder" class="on">Outfit builder</button>
+      <button data-nav="outfits">Saved outfits</button>
+      <button data-nav="wardrobe">Wardrobe</button>
+      <button data-nav="week">This week</button>
+      <button data-nav="guides">Style guides</button>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="hero">
+    <img src="stylekit-hero.webp" alt="A curated wardrobe rail in warm golden light — white linen shirt, brown shirt, grey trousers and a brown hoodie" onerror="this.style.display='none'">
+    <div class="hero-copy">
+      <h1>Your wardrobe, planned before the mirror.</h1>
+      <p>StyleKit turns the clothes you already own into outfits in seconds — then tracks wears, laundry and cost-per-wear, so nothing sits unworn.</p>
+    </div>
+  </div>
+  <div class="today-card" id="todayCard"></div>
+  <section id="builder">
+    <div class="sec-head"><span class="kicker">Outfit builder</span><h2>Mix, match, done.</h2></div>
+    <p class="sec-sub">Pick one piece from each rail — or let StyleKit surprise you. Pieces marked “In laundry” are greyed out until they are washed and back.</p>
+    <div class="builder">
+      <div class="builder-top">
+        <div class="chiprow" id="occChips" role="group" aria-label="Occasion"></div>
+        <div class="chiprow" id="weatherChips" role="group" aria-label="Weather"></div>
+      </div>
+      <div class="builder-grid">
