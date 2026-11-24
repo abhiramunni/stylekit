@@ -651,3 +651,65 @@ var GUIDES = [
 function renderGuides(){
   var icons = ['M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z','M12 3l2.5 5.5L20 9.5l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-1L12 3z','M20 6 9 17l-5-5','M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1'];
   document.getElementById('guideGrid').innerHTML = GUIDES.map(function(g,i){
+    return '<article class="guide" data-guide="' + i + '" tabindex="0" role="button"><span class="g-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="' + icons[i % icons.length] + '"/></svg></span><h3>' + esc(g.t) + '</h3><p>Tap to read the short version — two minutes, no jargon.</p></article>';
+  }).join('');
+}
+/* ---------- sheet ---------- */
+function openSheet(title, sub, bodyHtml){
+  document.getElementById('sheetTitle').textContent = title;
+  document.getElementById('sheetSub').textContent = sub || '';
+  document.getElementById('sheetBody').innerHTML = bodyHtml;
+  document.getElementById('sheetBack').classList.add('open');
+}
+function closeSheet(){ document.getElementById('sheetBack').classList.remove('open'); }
+function renderAll(){
+  renderToday(); renderChips(); renderRails(); renderOutfits(); renderLaundry(); renderWardrobe(); renderWeek(); renderStats(); renderGuides();
+}
+/* ---------- actions ---------- */
+function wearPieces(topId, bottomId, shoesId){
+  [topId, bottomId, shoesId].forEach(function(id){
+    var it = itemById(id);
+    if(!it) return;
+    it.wears += 1;
+    if(state.laundry.indexOf(id) === -1) state.laundry.push(id);
+  });
+  save();
+}
+function wearOutfit(id){
+  var o = outfitById(id);
+  if(!o) return;
+  wearPieces(o.top, o.bottom, o.shoes);
+  o.wears += 1;
+  save(); renderAll();
+  toast('Logged: ' + o.name + ' — pieces are in the laundry basket now.');
+}
+function shuffle(){
+  var pick = function(type){
+    var pool = state.items.filter(function(it){
+      return it.type===type && !isLaundry(it.id) && !it.washFirst && fitsItem(it);
+    });
+    if(!pool.length) pool = state.items.filter(function(it){ return it.type===type && !isLaundry(it.id); });
+    if(!pool.length) return null;
+    return pool[Math.floor(Math.random()*pool.length)];
+  };
+  var t = pick('top'), b = pick('bottom'), s = pick('shoes');
+  if(t) state.sel.top = t.id;
+  if(b) state.sel.bottom = b.id;
+  if(s) state.sel.shoes = s.id;
+  save(); renderRails();
+  toast('Shuffled a fresh outfit for a ' + state.weather.toLowerCase() + ' ' + state.occ.toLowerCase() + ' day.');
+}
+function saveOutfit(){
+  var nameInput = document.getElementById('outfitName');
+  var name = nameInput.value.trim();
+  if(!name){ toast('Give the outfit a name first.'); nameInput.focus(); return; }
+  if(!itemById(state.sel.top) || !itemById(state.sel.bottom) || !itemById(state.sel.shoes)){
+    toast('Pick one piece from each rail first.'); return;
+  }
+  var id = 'o' + Date.now();
+  state.outfits.push({id:id, name:name, top:state.sel.top, bottom:state.sel.bottom, shoes:state.sel.shoes, occ:state.occ, wears:0, sample:false});
+  nameInput.value = '';
+  save(); renderOutfits(); renderWeek(); renderStats(); renderToday();
+  toast('Saved “' + name + '” to your outfits.');
+}
+function washOne(id){
